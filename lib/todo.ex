@@ -21,7 +21,7 @@ defmodule TodoList do
       todo_list,
       date,
       [title],
-      fn titles -> [title | titles] end
+      &[title | &1]
     )
   end
 
