@@ -9,30 +9,25 @@ defmodule TodoList do
   ...>   TodoList.add_entry(%{date: ~D[2024-01-28], title: "Shopping"}) |>
   ...>   TodoList.add_entry(%{date: ~D[2024-01-27], title: "Movies"})
   iex> TodoList.entries(todo_list, ~D[2024-01-27])
-  [%{date: ~D[2024-01-27], title: "Movies"}, %{date: ~D[2024-01-27], title: "Dentist"}]
+  [%{id: 1, date: ~D[2024-01-27], title: "Dentist"}, %{id: 3, date: ~D[2024-01-27], title: "Movies"}]
   iex> TodoList.entries(todo_list, ~D[2024-01-29])
   []
 
   """
-  def new(), do: MultiDict.new()
+
+  defstruct auto_id: 1, entries: %{}
+
+  def new(), do: %TodoList{}
 
   def add_entry(todo_list, entry) do
-    MultiDict.add(todo_list, entry.date, entry)
+    entry = Map.put(entry, :id, todo_list.auto_id)
+    new_entries = Map.put(todo_list.entries, todo_list.auto_id, entry)
+    %TodoList{todo_list | entries: new_entries, auto_id: todo_list.auto_id + 1}
   end
 
   def entries(todo_list, date) do
-    MultiDict.get(todo_list, date)
-  end
-end
-
-defmodule MultiDict do
-  def new(), do: %{}
-
-  def add(dict, key, value) do
-    Map.update(dict, key, [value], &[value | &1])
-  end
-
-  def get(dict, key) do
-    Map.get(dict, key, [])
+    todo_list.entries
+    |> Stream.map(fn {_, entry} -> entry end)
+    |> Enum.filter(fn entry -> entry.date == date end)
   end
 end
