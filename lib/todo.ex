@@ -15,7 +15,7 @@ defmodule TodoList do
   ]
   iex> TodoList.entries(todo_list, ~D[2024-01-29])
   []
-  iex> TodoList.update_entry(todo_list, 1, &Map.put(&1, :title, "Dentist!"))
+  iex> TodoList.update_entry(todo_list, %{id: 1, date: ~D[2024-01-27], title: "Dentist!"})
   %TodoList{
     auto_id: 4,
     entries: %{
@@ -41,6 +41,10 @@ defmodule TodoList do
     todo_list.entries
     |> Stream.map(fn {_, entry} -> entry end)
     |> Enum.filter(fn entry -> entry.date == date end)
+  end
+
+  def update_entry(todo_list, %{} = new_entry) do
+    update_entry(todo_list, new_entry.id, fn _ -> new_entry end)
   end
 
   def update_entry(todo_list, entry_id, update_fun) do

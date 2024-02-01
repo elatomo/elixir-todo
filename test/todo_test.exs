@@ -2,6 +2,10 @@ defmodule TodoTest do
   use ExUnit.Case
   doctest TodoList
 
+  test "updating an entry requires a map" do
+    catch_error(TodoList.update_entry(TodoList.new(), "Not a map"))
+  end
+
   test "updating an entry should not allow modification of its ID" do
     todo_list =
       TodoList.new()
