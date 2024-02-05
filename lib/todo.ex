@@ -19,18 +19,18 @@ defmodule TodoList do
   %TodoList{
     auto_id: 4,
     entries: %{
-    1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist!"},
-    2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
-    3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+      1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist!"},
+      2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
+      3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
     }
   }
   iex> TodoList.delete_entry(todo_list, 1)
   %TodoList{
-  auto_id: 4,
-  entries: %{
-  2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
-  3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
-  }
+    auto_id: 4,
+    entries: %{
+      2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
+      3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+    }
   }
 
   """
