@@ -24,6 +24,14 @@ defmodule TodoList do
     3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
     }
   }
+  iex> TodoList.delete_entry(todo_list, 1)
+  %TodoList{
+  auto_id: 4,
+  entries: %{
+  2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
+  3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+  }
+  }
 
   """
 
@@ -59,5 +67,9 @@ defmodule TodoList do
         new_entries = Map.put(todo_list.entries, entry_id, new_entry)
         %TodoList{todo_list | entries: new_entries}
     end
+  end
+
+  def delete_entry(todo_list, entry_id) do
+    %TodoList{todo_list | entries: Map.delete(todo_list.entries, entry_id)}
   end
 end
