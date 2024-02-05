@@ -2,6 +2,21 @@ defmodule TodoTest do
   use ExUnit.Case
   doctest TodoList
 
+  test "creating with a list of entries" do
+    entries = [
+      %{date: ~D[2024-01-27], title: "Dentist"},
+      %{date: ~D[2024-01-28], title: "Shopping"}
+    ]
+
+    assert TodoList.new(entries) == %TodoList{
+             auto_id: 3,
+             entries: %{
+               1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
+               2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"}
+             }
+           }
+  end
+
   test "updating an entry requires a map" do
     catch_error(TodoList.update_entry(TodoList.new(), "Not a map"))
   end
