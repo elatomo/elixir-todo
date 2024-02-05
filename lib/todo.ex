@@ -81,3 +81,18 @@ defmodule TodoList do
     %TodoList{todo_list | entries: Map.delete(todo_list.entries, entry_id)}
   end
 end
+
+defmodule TodoList.CsvImporter do
+  def import(file_path) do
+    File.stream!(file_path)
+    |> Stream.map(&String.trim_trailing(&1, "\n"))
+    |> Stream.map(&String.split(&1, ","))
+    |> Stream.map(fn [date_string, title] ->
+      %{
+        date: Date.from_iso8601!(date_string),
+        title: title
+      }
+    end)
+    |> TodoList.new()
+  end
+end
