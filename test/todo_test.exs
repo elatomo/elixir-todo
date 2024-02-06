@@ -28,6 +28,22 @@ defmodule TodoListTest do
 
     catch_error(TodoList.update_entry(todo_list, 1, &Map.put(&1, :id, 5)))
   end
+
+  test "implements `Collectable` protocol" do
+    entries = [
+      %{date: ~D[2024-01-27], title: "Dentist"},
+      %{date: ~D[2024-01-28], title: "Shopping"},
+      %{date: ~D[2024-01-27], title: "Movies"}
+    ]
+
+    todo_list = Enum.into(entries, TodoList.new(), & &1)
+
+    assert todo_list.entries == %{
+             1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
+             2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
+             3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+           }
+  end
 end
 
 defmodule TodoList.CsvImporterTest do
