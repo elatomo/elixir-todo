@@ -21,6 +21,7 @@ defmodule TodoServer do
   ]
 
   """
+  require Logger
 
   def start() do
     spawn(fn -> loop(TodoList.new()) end)
@@ -72,6 +73,11 @@ defmodule TodoServer do
 
   defp process_message(todo_list, {:delete_entry, entry_id}) do
     TodoList.delete_entry(todo_list, entry_id)
+  end
+
+  defp process_message(todo_list, unknown_message) do
+    Logger.error("Received unknown message: #{inspect(unknown_message)}")
+    todo_list
   end
 end
 
