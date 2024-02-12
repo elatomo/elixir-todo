@@ -13,3 +13,7 @@ test:  ## Run the tests
 .PHONY: clean
 clean:  ## Remove all build artifacts
 	mix clean
+
+.PHONY: shell
+shell:  ## Start iex with the project's environment loaded
+	iex -S mix
