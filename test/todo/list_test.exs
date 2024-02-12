@@ -1,6 +1,6 @@
 defmodule TodoListTest do
   use ExUnit.Case
-  doctest TodoList
+  doctest Todo.List
 
   test "creating with a list of entries" do
     entries = [
@@ -8,7 +8,7 @@ defmodule TodoListTest do
       %{date: ~D[2024-01-28], title: "Shopping"}
     ]
 
-    assert TodoList.new(entries) == %TodoList{
+    assert Todo.List.new(entries) == %Todo.List{
              auto_id: 3,
              entries: %{
                1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
@@ -18,15 +18,15 @@ defmodule TodoListTest do
   end
 
   test "updating an entry requires a map" do
-    catch_error(TodoList.update_entry(TodoList.new(), "Not a map"))
+    catch_error(Todo.List.update_entry(Todo.List.new(), "Not a map"))
   end
 
   test "updating an entry should not allow modification of its ID" do
     todo_list =
-      TodoList.new()
-      |> TodoList.add_entry(%{date: ~D[2024-01-27], title: "Dentist"})
+      Todo.List.new()
+      |> Todo.List.add_entry(%{date: ~D[2024-01-27], title: "Dentist"})
 
-    catch_error(TodoList.update_entry(todo_list, 1, &Map.put(&1, :id, 5)))
+    catch_error(Todo.List.update_entry(todo_list, 1, &Map.put(&1, :id, 5)))
   end
 
   test "implements `Collectable` protocol" do
@@ -36,7 +36,7 @@ defmodule TodoListTest do
       %{date: ~D[2024-01-27], title: "Movies"}
     ]
 
-    todo_list = Enum.into(entries, TodoList.new(), & &1)
+    todo_list = Enum.into(entries, Todo.List.new(), & &1)
 
     assert todo_list.entries == %{
              1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
@@ -46,11 +46,11 @@ defmodule TodoListTest do
   end
 end
 
-defmodule TodoList.CsvImporterTest do
+defmodule TodoListCsvImporterTest do
   use ExUnit.Case
 
   test "importing from a CSV file" do
-    todo_list = TodoList.CsvImporter.import("#{__DIR__}/todos.csv")
+    todo_list = Todo.List.CsvImporter.import("#{__DIR__}/todos.csv")
 
     assert todo_list.entries == %{
              1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
@@ -58,9 +58,4 @@ defmodule TodoList.CsvImporterTest do
              3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
            }
   end
-end
-
-defmodule TodoServerTest do
-  use ExUnit.Case
-  doctest TodoServer
 end
