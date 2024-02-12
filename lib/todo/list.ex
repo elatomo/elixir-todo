@@ -4,34 +4,34 @@ defmodule Todo.List do
 
   ## Example
 
-  iex> todo_list = Todo.List.new() |>
-  ...>   Todo.List.add_entry(%{date: ~D[2024-01-27], title: "Dentist"}) |>
-  ...>   Todo.List.add_entry(%{date: ~D[2024-01-28], title: "Shopping"}) |>
-  ...>   Todo.List.add_entry(%{date: ~D[2024-01-27], title: "Movies"})
-  iex> Todo.List.entries(todo_list, ~D[2024-01-27])
-  [
-    %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
-    %{id: 3, date: ~D[2024-01-27], title: "Movies"}
-  ]
-  iex> Todo.List.entries(todo_list, ~D[2024-01-29])
-  []
-  iex> Todo.List.update_entry(todo_list, %{id: 1, date: ~D[2024-01-27], title: "Dentist!"})
-  %Todo.List{
-    auto_id: 4,
-    entries: %{
-      1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist!"},
-      2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
-      3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
-    }
-  }
-  iex> Todo.List.delete_entry(todo_list, 1)
-  %Todo.List{
-    auto_id: 4,
-    entries: %{
-      2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
-      3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
-    }
-  }
+      iex> todo_list = Todo.List.new() |>
+      ...>   Todo.List.add_entry(%{date: ~D[2024-01-27], title: "Dentist"}) |>
+      ...>   Todo.List.add_entry(%{date: ~D[2024-01-28], title: "Shopping"}) |>
+      ...>   Todo.List.add_entry(%{date: ~D[2024-01-27], title: "Movies"})
+      iex> Todo.List.entries(todo_list, ~D[2024-01-27])
+      [
+        %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
+        %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+      ]
+      iex> Todo.List.entries(todo_list, ~D[2024-01-29])
+      []
+      iex> Todo.List.update_entry(todo_list, %{id: 1, date: ~D[2024-01-27], title: "Dentist!"})
+      %Todo.List{
+        auto_id: 4,
+        entries: %{
+          1 => %{id: 1, date: ~D[2024-01-27], title: "Dentist!"},
+          2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
+          3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+        }
+      }
+      iex> Todo.List.delete_entry(todo_list, 1)
+      %Todo.List{
+        auto_id: 4,
+        entries: %{
+          2 => %{id: 2, date: ~D[2024-01-28], title: "Shopping"},
+          3 => %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+        }
+      }
 
   """
 

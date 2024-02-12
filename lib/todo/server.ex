@@ -4,21 +4,21 @@ defmodule Todo.Server do
 
   ## Example
 
-  iex> {:ok, todo_server} = Todo.Server.start()
-  iex> Todo.Server.add_entry(todo_server, %{date: ~D[2024-01-27], title: "Dentist"})
-  iex> Todo.Server.add_entry(todo_server, %{date: ~D[2024-01-28], title: "Shopping"})
-  iex> Todo.Server.add_entry(todo_server, %{date: ~D[2024-01-27], title: "Movies"})
-  iex> Todo.Server.entries(todo_server, ~D[2024-01-27])
-  [
-    %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
-    %{id: 3, date: ~D[2024-01-27], title: "Movies"}
-  ]
-  iex> Todo.Server.update_entry(todo_server, %{id: 1, date: ~D[2024-01-27], title: "Dentist!"})
-  iex> Todo.Server.delete_entry(todo_server, 3)
-  iex> Todo.Server.entries(todo_server, ~D[2024-01-27])
-  [
-    %{id: 1, date: ~D[2024-01-27], title: "Dentist!"},
-  ]
+      iex> {:ok, server} = Todo.Server.start()
+      iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-27], title: "Dentist"})
+      iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-28], title: "Shopping"})
+      iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-27], title: "Movies"})
+      iex> Todo.Server.entries(server, ~D[2024-01-27])
+      [
+        %{id: 1, date: ~D[2024-01-27], title: "Dentist"},
+        %{id: 3, date: ~D[2024-01-27], title: "Movies"}
+      ]
+      iex> Todo.Server.update_entry(server, %{id: 1, date: ~D[2024-01-27], title: "Dentist!"})
+      iex> Todo.Server.delete_entry(server, 3)
+      iex> Todo.Server.entries(server, ~D[2024-01-27])
+      [
+        %{id: 1, date: ~D[2024-01-27], title: "Dentist!"},
+      ]
 
   """
   use GenServer
