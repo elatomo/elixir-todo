@@ -1,7 +1,7 @@
-# Todo
+# Elixir Todo
 
-A simple to-do list application inspired by "Elixir in Action." Created for
-learning Elixir through book tutorials 🤓.
+A simple to-do list application inspired by the "Elixir in Action" book. Created
+for learning Elixir through the book's tutorials 🤓.
 
 ## Installation
 
@@ -20,3 +20,6 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/todo>.
 
+----
+
+![Logo](assets/elixir-todo-logo.png)
