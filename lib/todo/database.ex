@@ -33,47 +33,48 @@ defmodule Todo.Database do
   end
 
   def store(key, data) do
-    GenServer.cast(__MODULE__, {:store, key, data})
+    key
+    |> choose_worker()
+    |> Todo.DatabaseWorker.store(key, data)
   end
 
   def get(key) do
-    GenServer.call(__MODULE__, {:get, key})
+    key
+    |> choose_worker()
+    |> Todo.DatabaseWorker.get(key)
+  end
+
+  defp choose_worker(key) do
+    GenServer.call(__MODULE__, {:choose_worker, key})
   end
 
   @impl GenServer
   def init(_) do
-    # Resolve and ensure the database folder
+    db_folder = ensure_db_folder()
+    {:ok, start_workers(db_folder)}
+  end
+
+  @impl GenServer
+  def handle_call({:choose_worker, key}, _, workers) do
+    # Ensure we always choose the same worker for the same key to ensure per-key
+    # synchronization at the db level. To do so, we use `:erlang.phash2/2` to
+    # compute and normalize the key's hash within the range [0..2].
+    worker_key = :erlang.phash2(key, 3)
+    {:reply, workers[worker_key], workers}
+  end
+
+  defp ensure_db_folder() do
     xdg_data_home = System.get_env("XDG_DATA_HOME") || "~/.local/share"
     db_folder = Path.expand(Path.join(xdg_data_home, @folder_name))
     File.mkdir_p!(db_folder)
 
-    # Init pool of workers
-    workers =
-      0..2
-      |> Enum.map(fn x ->
-        {:ok, worker} = Todo.DatabaseWorker.start(db_folder)
-        {x, worker}
-      end)
-      |> Map.new()
-
-    {:ok, %{db_folder: db_folder, workers: workers}}
+    db_folder
   end
 
-  @impl GenServer
-  def handle_cast({:store, key, data}, state) do
-    Todo.DatabaseWorker.store(choose_worker(state.workers, key), key, data)
-    {:noreply, state}
-  end
-
-  @impl GenServer
-  def handle_call({:get, key}, _, state) do
-    {:reply, Todo.DatabaseWorker.get(choose_worker(state.workers, key), key), state}
-  end
-
-  defp choose_worker(workers, key) do
-    # Ensure we always choose the same worker for the same key to ensure per-key
-    # synchronization at the database level. To do so, we use `:erlang.phash2/2`
-    # to compute and normalize the key's hash within the range [0..2].
-    workers[:erlang.phash2(key, 3)]
+  defp start_workers(db_folder) do
+    for index <- 0..2, into: %{} do
+      {:ok, pid} = Todo.DatabaseWorker.start(db_folder)
+      {index, pid}
+    end
   end
 end
