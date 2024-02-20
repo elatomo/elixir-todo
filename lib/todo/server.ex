@@ -4,7 +4,8 @@ defmodule Todo.Server do
 
   ## Example
 
-      iex> {:ok, server} = Todo.Server.start()
+      iex> Todo.Database.start()
+      iex> {:ok, server} = Todo.Server.start("My list")
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-27], title: "Dentist"})
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-28], title: "Shopping"})
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-27], title: "Movies"})
@@ -23,8 +24,8 @@ defmodule Todo.Server do
   """
   use GenServer
 
-  def start do
-    GenServer.start(__MODULE__, nil)
+  def start(name) do
+    GenServer.start(__MODULE__, name)
   end
 
   def add_entry(todo_server, new_entry) do
@@ -44,27 +45,33 @@ defmodule Todo.Server do
   end
 
   @impl GenServer
-  def init(_) do
-    {:ok, Todo.List.new()}
+  def init(name) do
+    {:ok, {name, Todo.Database.get(name) || Todo.List.new()}}
   end
 
   @impl GenServer
-  def handle_cast({:add_entry, new_entry}, todo_list) do
-    {:noreply, Todo.List.add_entry(todo_list, new_entry)}
+  def handle_cast({:add_entry, new_entry}, {name, todo_list}) do
+    new_list = Todo.List.add_entry(todo_list, new_entry)
+    Todo.Database.store(name, new_list)
+    {:noreply, {name, new_list}}
   end
 
   @impl GenServer
-  def handle_cast({:update_entry, new_entry}, todo_list) do
-    {:noreply, Todo.List.update_entry(todo_list, new_entry)}
+  def handle_cast({:update_entry, new_entry}, {name, todo_list}) do
+    new_list = Todo.List.update_entry(todo_list, new_entry)
+    Todo.Database.store(name, new_list)
+    {:noreply, {name, new_list}}
   end
 
   @impl GenServer
-  def handle_cast({:delete_entry, entry_id}, todo_list) do
-    {:noreply, Todo.List.delete_entry(todo_list, entry_id)}
+  def handle_cast({:delete_entry, entry_id}, {name, todo_list}) do
+    new_list = Todo.List.delete_entry(todo_list, entry_id)
+    Todo.Database.store(name, new_list)
+    {:noreply, {name, new_list}}
   end
 
   @impl GenServer
-  def handle_call({:entries, date}, _, todo_list) do
-    {:reply, Todo.List.entries(todo_list, date), todo_list}
+  def handle_call({:entries, date}, _, {name, todo_list}) do
+    {:reply, Todo.List.entries(todo_list, date), {name, todo_list}}
   end
 end
