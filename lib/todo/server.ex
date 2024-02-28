@@ -1,6 +1,8 @@
 defmodule Todo.Server do
   @moduledoc """
-  Todo list server.
+  To-do list server.
+
+  Allows multiple clients to work on a single to-do list.
 
   ## Example
 

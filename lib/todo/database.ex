@@ -1,9 +1,9 @@
 defmodule Todo.Database do
   @moduledoc """
-  Simple disk-based database.
-
-  Uses disk-based persistence, encoding data into the Erlang external term
+  Simple disk-based database, encoding data into the Erlang external term
   format.
+
+  Manages a pool of workers to handle database requests.
 
   ## Example
 

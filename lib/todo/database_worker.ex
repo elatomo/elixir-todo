@@ -1,6 +1,8 @@
 defmodule Todo.DatabaseWorker do
   @moduledoc """
   Database worker.
+
+  Performs read/write operations on the database.
   """
 
   use GenServer

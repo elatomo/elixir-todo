@@ -1,6 +1,9 @@
 defmodule Todo.Cache do
   @moduledoc """
-  Todo list server cache.
+  To-do list server cache.
+
+  Maintains a collection of to-do servers and is responsible for their creation
+  and discovery.
   """
 
   use GenServer
