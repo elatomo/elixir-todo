@@ -23,8 +23,10 @@ defmodule Todo.Server do
 
   """
   use GenServer
+  require Logger
 
   def start(name) do
+    Logger.debug("Starting to-do server '#{name}'")
     GenServer.start(__MODULE__, name)
   end
 

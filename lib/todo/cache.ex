@@ -4,8 +4,10 @@ defmodule Todo.Cache do
   """
 
   use GenServer
+  require Logger
 
   def start do
+    Logger.debug("Starting to-do cache")
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 

@@ -24,11 +24,13 @@ defmodule Todo.Database do
   """
 
   use GenServer
+  require Logger
 
   @folder_name "elixir-todo"
 
   def start do
     # Start the server and register the process locally
+    Logger.debug("Starting to-do database")
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 

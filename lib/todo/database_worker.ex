@@ -4,8 +4,10 @@ defmodule Todo.DatabaseWorker do
   """
 
   use GenServer
+  require Logger
 
   def start(db_folder) do
+    Logger.debug("Starting to-do database worker")
     GenServer.start(__MODULE__, db_folder)
   end
 
