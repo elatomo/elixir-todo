@@ -7,7 +7,6 @@ defmodule Todo.DatabaseWorker do
   require Logger
 
   def start(db_folder) do
-    Logger.debug("Starting to-do database worker")
     GenServer.start(__MODULE__, db_folder)
   end
 
@@ -21,6 +20,7 @@ defmodule Todo.DatabaseWorker do
 
   @impl GenServer
   def init(db_folder) do
+    Logger.debug("Starting to-do database worker")
     {:ok, db_folder}
   end
 

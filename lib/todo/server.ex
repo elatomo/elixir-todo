@@ -26,7 +26,6 @@ defmodule Todo.Server do
   require Logger
 
   def start(name) do
-    Logger.debug("Starting to-do server '#{name}'")
     GenServer.start(__MODULE__, name)
   end
 
@@ -48,6 +47,7 @@ defmodule Todo.Server do
 
   @impl GenServer
   def init(name) do
+    Logger.debug("Starting to-do server '#{name}'")
     # Prevent long-running initialization by resolving the database in a
     # `handle_continue/2` callback, which will be invoked immediately after
     # entering the loop.

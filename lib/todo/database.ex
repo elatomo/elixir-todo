@@ -30,7 +30,6 @@ defmodule Todo.Database do
 
   def start do
     # Start the server and register the process locally
-    Logger.debug("Starting to-do database")
     GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 
@@ -52,6 +51,7 @@ defmodule Todo.Database do
 
   @impl GenServer
   def init(_) do
+    Logger.debug("Starting to-do database")
     db_folder = ensure_db_folder()
     {:ok, start_workers(db_folder)}
   end
