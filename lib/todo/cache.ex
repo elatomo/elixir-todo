@@ -6,11 +6,11 @@ defmodule Todo.Cache do
   use GenServer
 
   def start do
-    GenServer.start(__MODULE__, nil)
+    GenServer.start(__MODULE__, nil, name: __MODULE__)
   end
 
-  def server_process(cache, todo_list_name) do
-    GenServer.call(cache, {:server_process, todo_list_name})
+  def server_process(todo_list_name) do
+    GenServer.call(__MODULE__, {:server_process, todo_list_name})
   end
 
   @impl GenServer
