@@ -7,7 +7,7 @@ defmodule Todo.Database do
 
   ## Example
 
-      iex> Todo.Database.start()
+      iex> Todo.Database.start_link()
       iex> Todo.Database.get("new_db")
       nil
       iex> todo_list = Todo.List.new() |>
@@ -28,9 +28,9 @@ defmodule Todo.Database do
 
   @folder_name "elixir-todo"
 
-  def start do
+  def start_link do
     # Start the server and register the process locally
-    GenServer.start(__MODULE__, nil, name: __MODULE__)
+    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
   def store(key, data) do
@@ -75,7 +75,7 @@ defmodule Todo.Database do
 
   defp start_workers(db_folder) do
     for index <- 0..2, into: %{} do
-      {:ok, pid} = Todo.DatabaseWorker.start(db_folder)
+      {:ok, pid} = Todo.DatabaseWorker.start_link(db_folder)
       {index, pid}
     end
   end

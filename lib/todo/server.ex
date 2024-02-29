@@ -6,8 +6,8 @@ defmodule Todo.Server do
 
   ## Example
 
-      iex> Todo.Database.start()
-      iex> {:ok, server} = Todo.Server.start("My list")
+      iex> Todo.Database.start_link()
+      iex> {:ok, server} = Todo.Server.start_link("My list")
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-27], title: "Dentist"})
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-28], title: "Shopping"})
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-27], title: "Movies"})
@@ -27,8 +27,8 @@ defmodule Todo.Server do
   use GenServer
   require Logger
 
-  def start(name) do
-    GenServer.start(__MODULE__, name)
+  def start_link(name) do
+    GenServer.start_link(__MODULE__, name)
   end
 
   def add_entry(todo_server, new_entry) do
