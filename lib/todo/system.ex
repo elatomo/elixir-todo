@@ -3,7 +3,15 @@ defmodule Todo.System do
   To-do system supervisor.
   """
 
+  use Supervisor
+
   def start_link do
-    Supervisor.start_link([Todo.Cache], strategy: :one_for_one)
+    # Starts the supervisor with `Todo.System` as the callback module
+    Supervisor.start_link(__MODULE__, nil)
+  end
+
+  def init(_) do
+    # Impements the required callback function
+    Supervisor.init([Todo.Cache], strategy: :one_for_one)
   end
 end
