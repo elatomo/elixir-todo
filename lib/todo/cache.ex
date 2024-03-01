@@ -20,8 +20,6 @@ defmodule Todo.Cache do
   @impl GenServer
   def init(_) do
     Logger.debug("Starting to-do cache")
-    # Ensure the database process is started
-    Todo.Database.start_link()
     {:ok, %{}}
   end
 

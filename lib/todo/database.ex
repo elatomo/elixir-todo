@@ -7,7 +7,7 @@ defmodule Todo.Database do
 
   ## Example
 
-      iex> Todo.Database.start_link()
+      iex> Todo.Database.start_link([])
       iex> Todo.Database.get("new_db")
       nil
       iex> todo_list = Todo.List.new() |>
@@ -28,7 +28,7 @@ defmodule Todo.Database do
 
   @folder_name "elixir-todo"
 
-  def start_link do
+  def start_link(_) do
     # Start the server and register the process locally
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
