@@ -7,6 +7,7 @@ defmodule Todo.Database do
 
   ## Example
 
+      iex> Todo.ProcessRegistry.start_link()
       iex> Todo.Database.start_link([])
       iex> Todo.Database.get("new_db")
       nil
@@ -26,6 +27,7 @@ defmodule Todo.Database do
   use GenServer
   require Logger
 
+  @pool_size 3
   @folder_name "elixir-todo"
 
   def start_link(_) do
@@ -53,16 +55,17 @@ defmodule Todo.Database do
   def init(_) do
     Logger.debug("Starting to-do database")
     db_folder = ensure_db_folder()
-    {:ok, start_workers(db_folder)}
+    start_workers(db_folder)
+    {:ok, nil}
   end
 
   @impl GenServer
-  def handle_call({:choose_worker, key}, _, workers) do
+  def handle_call({:choose_worker, key}, _, state) do
     # Ensure we always choose the same worker for the same key to ensure per-key
     # synchronization at the db level. To do so, we use `:erlang.phash2/2` to
-    # compute and normalize the key's hash within the range [0..2].
-    worker_key = :erlang.phash2(key, 3)
-    {:reply, workers[worker_key], workers}
+    # compute and normalize the key's hash within the range.
+    worker_key = :erlang.phash2(key, @pool_size) + 1
+    {:reply, worker_key, state}
   end
 
   defp ensure_db_folder() do
@@ -74,9 +77,8 @@ defmodule Todo.Database do
   end
 
   defp start_workers(db_folder) do
-    for index <- 0..2, into: %{} do
-      {:ok, pid} = Todo.DatabaseWorker.start_link(db_folder)
-      {index, pid}
+    for id <- 1..@pool_size do
+      {:ok, _} = Todo.DatabaseWorker.start_link({db_folder, id})
     end
   end
 end

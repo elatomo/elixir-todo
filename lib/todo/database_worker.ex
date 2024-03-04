@@ -8,16 +8,16 @@ defmodule Todo.DatabaseWorker do
   use GenServer
   require Logger
 
-  def start_link(db_folder) do
-    GenServer.start_link(__MODULE__, db_folder)
+  def start_link({db_folder, worker_id}) do
+    GenServer.start_link(__MODULE__, db_folder, name: via_tuple(worker_id))
   end
 
-  def store(worker, key, data) do
-    GenServer.cast(worker, {:store, key, data})
+  def store(worker_id, key, data) do
+    GenServer.cast(via_tuple(worker_id), {:store, key, data})
   end
 
-  def get(worker, key) do
-    GenServer.call(worker, {:get, key})
+  def get(worker_id, key) do
+    GenServer.call(via_tuple(worker_id), {:get, key})
   end
 
   @impl GenServer
@@ -48,5 +48,9 @@ defmodule Todo.DatabaseWorker do
 
   defp file_name(db_folder, key) do
     Path.join(db_folder, to_string(key))
+  end
+
+  defp via_tuple(worker_id) do
+    Todo.ProcessRegistry.via_tuple({__MODULE__, worker_id})
   end
 end
