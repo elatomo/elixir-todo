@@ -10,6 +10,7 @@ defmodule Todo.System do
     Supervisor.start_link(__MODULE__, nil)
   end
 
+  @impl true
   def init(_) do
     # Impements the required callback function
     Supervisor.init(
