@@ -24,15 +24,22 @@ defmodule Todo.Database do
 
   """
 
-  use GenServer
+  use Supervisor
   require Logger
 
   @pool_size 3
   @folder_name "elixir-todo"
 
   def start_link(_) do
-    # Start the server and register the process locally
-    GenServer.start_link(__MODULE__, nil, name: __MODULE__)
+    Logger.debug("Starting to-do database")
+    db_folder = ensure_db_folder()
+    Supervisor.start_link(__MODULE__, db_folder, name: __MODULE__)
+  end
+
+  @impl true
+  def init(db_folder) do
+    workers = Enum.map(1..@pool_size, &worker_spec(&1, db_folder))
+    Supervisor.init(workers, strategy: :one_for_one)
   end
 
   def store(key, data) do
@@ -47,25 +54,18 @@ defmodule Todo.Database do
     |> Todo.DatabaseWorker.get(key)
   end
 
+  defp worker_spec(worker_id, db_folder) do
+    Supervisor.child_spec(
+      {Todo.DatabaseWorker, {db_folder, worker_id}},
+      id: worker_id
+    )
+  end
+
   defp choose_worker(key) do
-    GenServer.call(__MODULE__, {:choose_worker, key})
-  end
-
-  @impl GenServer
-  def init(_) do
-    Logger.debug("Starting to-do database")
-    db_folder = ensure_db_folder()
-    start_workers(db_folder)
-    {:ok, nil}
-  end
-
-  @impl GenServer
-  def handle_call({:choose_worker, key}, _, state) do
     # Ensure we always choose the same worker for the same key to ensure per-key
     # synchronization at the db level. To do so, we use `:erlang.phash2/2` to
     # compute and normalize the key's hash within the range.
-    worker_key = :erlang.phash2(key, @pool_size) + 1
-    {:reply, worker_key, state}
+    :erlang.phash2(key, @pool_size) + 1
   end
 
   defp ensure_db_folder() do
@@ -74,11 +74,5 @@ defmodule Todo.Database do
     File.mkdir_p!(db_folder)
 
     db_folder
-  end
-
-  defp start_workers(db_folder) do
-    for id <- 1..@pool_size do
-      {:ok, _} = Todo.DatabaseWorker.start_link({db_folder, id})
-    end
   end
 end
