@@ -29,7 +29,7 @@ defmodule Todo.Server do
   require Logger
 
   def start_link(name) do
-    GenServer.start_link(__MODULE__, name)
+    GenServer.start_link(__MODULE__, name, name: via_tuple(name))
   end
 
   def add_entry(todo_server, new_entry) do
@@ -87,5 +87,9 @@ defmodule Todo.Server do
   @impl GenServer
   def handle_call({:entries, date}, _, {name, todo_list}) do
     {:reply, Todo.List.entries(todo_list, date), {name, todo_list}}
+  end
+
+  defp via_tuple(name) do
+    Todo.ProcessRegistry.via_tuple({__MODULE__, name})
   end
 end
