@@ -25,7 +25,7 @@ defmodule Todo.Server do
       ]
 
   """
-  use GenServer
+  use GenServer, restart: :temporary
   require Logger
 
   def start_link(name) do
