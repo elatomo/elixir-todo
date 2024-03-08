@@ -12,7 +12,7 @@ defmodule Todo.System do
 
   @impl true
   def init(_) do
-    # Impements the required callback function
+    # Implements the required callback function
     Supervisor.init(
       [Todo.ProcessRegistry, Todo.Database, Todo.Cache],
       strategy: :one_for_one
