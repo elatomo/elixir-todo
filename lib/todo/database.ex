@@ -22,47 +22,43 @@ defmodule Todo.Database do
 
   """
 
-  use Supervisor
   require Logger
 
   @pool_size 3
 
-  def start_link(_) do
+  def child_spec(_) do
     Logger.debug("Starting to-do database")
     db_folder = ensure_db_folder()
-    Supervisor.start_link(__MODULE__, db_folder, name: __MODULE__)
-  end
 
-  @impl true
-  def init(db_folder) do
-    workers = Enum.map(1..@pool_size, &worker_spec(&1, db_folder))
-    Supervisor.init(workers, strategy: :one_for_one)
-  end
-
-  def store(key, data) do
-    key
-    |> choose_worker()
-    |> Todo.DatabaseWorker.store(key, data)
-  end
-
-  def get(key) do
-    key
-    |> choose_worker()
-    |> Todo.DatabaseWorker.get(key)
-  end
-
-  defp worker_spec(worker_id, db_folder) do
-    Supervisor.child_spec(
-      {Todo.DatabaseWorker, {db_folder, worker_id}},
-      id: worker_id
+    :poolboy.child_spec(
+      __MODULE__,
+      # Pool configuration
+      [
+        name: {:local, __MODULE__},
+        worker_module: Todo.DatabaseWorker,
+        size: @pool_size
+      ],
+      # Worker arguments
+      [db_folder]
     )
   end
 
-  defp choose_worker(key) do
-    # Ensure we always choose the same worker for the same key to ensure per-key
-    # synchronization at the db level. To do so, we use `:erlang.phash2/2` to
-    # compute and normalize the key's hash within the range.
-    :erlang.phash2(key, @pool_size) + 1
+  def store(key, data) do
+    :poolboy.transaction(
+      __MODULE__,
+      fn worker_pid ->
+        Todo.DatabaseWorker.store(worker_pid, key, data)
+      end
+    )
+  end
+
+  def get(key) do
+    :poolboy.transaction(
+      __MODULE__,
+      fn worker_pid ->
+        Todo.DatabaseWorker.get(worker_pid, key)
+      end
+    )
   end
 
   defp ensure_db_folder() do
