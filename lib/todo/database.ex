@@ -26,7 +26,6 @@ defmodule Todo.Database do
   require Logger
 
   @pool_size 3
-  @folder_name "elixir-todo"
 
   def start_link(_) do
     Logger.debug("Starting to-do database")
@@ -67,8 +66,7 @@ defmodule Todo.Database do
   end
 
   defp ensure_db_folder() do
-    xdg_data_home = System.get_env("XDG_DATA_HOME") || "~/.local/share"
-    db_folder = Path.expand(Path.join(xdg_data_home, @folder_name))
+    db_folder = Application.get_env(:todo, :db_folder)
     File.mkdir_p!(db_folder)
 
     db_folder
