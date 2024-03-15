@@ -6,8 +6,6 @@ defmodule Todo.Server do
 
   ## Example
 
-      iex> Todo.ProcessRegistry.start_link()
-      iex> Todo.Database.start_link([])
       iex> {:ok, server} = Todo.Server.start_link("My list")
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-27], title: "Dentist"})
       iex> Todo.Server.add_entry(server, %{date: ~D[2024-01-28], title: "Shopping"})

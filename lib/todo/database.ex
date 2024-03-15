@@ -7,8 +7,6 @@ defmodule Todo.Database do
 
   ## Example
 
-      iex> Todo.ProcessRegistry.start_link()
-      iex> Todo.Database.start_link([])
       iex> Todo.Database.get("new_db")
       nil
       iex> todo_list = Todo.List.new() |>
