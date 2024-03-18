@@ -14,7 +14,7 @@ defmodule Todo.System do
   def init(_) do
     # Implements the required callback function
     Supervisor.init(
-      [Todo.ProcessRegistry, Todo.Database, Todo.Cache],
+      [Todo.ProcessRegistry, Todo.Database, Todo.Cache, Todo.Web],
       strategy: :one_for_one
     )
   end
