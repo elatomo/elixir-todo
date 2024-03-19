@@ -13,4 +13,11 @@ defmodule Todo.WebTest do
       assert conn.resp_body == "ok"
     end
   end
+
+  test "unmatched routes return a 404" do
+    conn = conn(:get, "/unknown") |> Todo.Web.call(@opts)
+
+    assert conn.state == :sent
+    assert conn.status == 404
+  end
 end
