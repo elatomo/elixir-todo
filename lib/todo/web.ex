@@ -10,11 +10,13 @@ defmodule Todo.Web do
   end
 
   def child_spec(_arg) do
-    Logger.debug("Starting web server")
+    http_port = Application.get_env(:todo, :http_port)
+    Logger.debug("Starting web server on port #{http_port}")
 
     Bandit.child_spec(
       scheme: :http,
-      plug: __MODULE__
+      plug: __MODULE__,
+      port: http_port
     )
   end
 end
