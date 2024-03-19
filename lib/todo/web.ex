@@ -5,9 +5,7 @@ defmodule Todo.Web do
   plug(:match)
   plug(:dispatch)
 
-  get "/status" do
-    send_resp(conn, 200, "ok")
-  end
+  get("/status", do: send_resp(conn, 200, "ok"))
 
   def child_spec(_arg) do
     http_port = Application.get_env(:todo, :http_port)
