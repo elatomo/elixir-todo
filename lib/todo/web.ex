@@ -3,6 +3,13 @@ defmodule Todo.Web do
   require Logger
 
   plug(:match)
+  # JSON parser only if the content-type is application/json
+  plug(Plug.Parsers,
+    parsers: [:json],
+    pass: ["application/json"],
+    json_decoder: Jason
+  )
+
   plug(:dispatch)
 
   get("/status", do: send_resp(conn, 200, "ok"))
@@ -14,6 +21,16 @@ defmodule Todo.Web do
       |> Todo.Server.entries(Date.from_iso8601!(date))
 
     send_resp_json(conn, 200, entries)
+  end
+
+  post "/lists/:list/dates/:date/entries" do
+    %{"title" => title} = conn.body_params
+
+    list
+    |> Todo.Cache.server_process()
+    |> Todo.Server.add_entry(%{date: Date.from_iso8601!(date), title: title})
+
+    send_resp_json(conn, 201, %{})
   end
 
   # Fallback handler when there is no match
