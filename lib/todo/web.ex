@@ -33,6 +33,20 @@ defmodule Todo.Web do
     send_resp_json(conn, 201, %{})
   end
 
+  put "/lists/:list/entries/:entry_id" do
+    %{"date" => date, "title" => title} = conn.body_params
+
+    list
+    |> Todo.Cache.server_process()
+    |> Todo.Server.update_entry(%{
+      id: String.to_integer(entry_id),
+      date: Date.from_iso8601!(date),
+      title: title
+    })
+
+    send_resp_json(conn, 200, %{})
+  end
+
   delete "/lists/:list/entries/:entry_id" do
     list
     |> Todo.Cache.server_process()

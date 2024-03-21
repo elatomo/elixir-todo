@@ -63,9 +63,39 @@ defmodule Todo.WebTest do
     end
   end
 
+  describe "update a to-do list entry" do
+    test "updates the entry and returns a 200 status" do
+      list_name = "Bob's list III"
+      date = ~D[2024-01-27]
+      entry_id = 1
+
+      server = Todo.Cache.server_process(list_name)
+      Todo.Server.add_entry(server, %{date: date, title: "Dentist"})
+
+      # Sanity check
+      assert length(Todo.Server.entries(server, date)) == 1
+
+      updated_entry = %{title: "Dentist!", date: ~D[2024-01-28]}
+
+      conn =
+        :put
+        |> conn("/lists/#{list_name}/entries/#{entry_id}", Jason.encode!(updated_entry))
+        |> put_req_header("content-type", "application/json")
+        |> Todo.Web.call(@opts)
+
+      assert conn.status == 200
+      # No more entries for the original date
+      assert Todo.Server.entries(server, date) == []
+
+      assert Todo.Server.entries(server, updated_entry.date) == [
+               Map.put(updated_entry, :id, entry_id)
+             ]
+    end
+  end
+
   describe "delete a to-do list entry" do
     test "delete the entry and returns a 204 status" do
-      list_name = "Bob's list III"
+      list_name = "Bob's list IV"
       date = ~D[2024-01-27]
       entry_id = 1
 
