@@ -33,6 +33,14 @@ defmodule Todo.Web do
     send_resp_json(conn, 201, %{})
   end
 
+  delete "/lists/:list/entries/:entry_id" do
+    list
+    |> Todo.Cache.server_process()
+    |> Todo.Server.delete_entry(String.to_integer(entry_id))
+
+    send_resp(conn, 204, "")
+  end
+
   # Fallback handler when there is no match
   match(_, do: send_resp(conn, 404, "Not Found"))
 

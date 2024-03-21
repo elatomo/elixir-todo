@@ -63,6 +63,29 @@ defmodule Todo.WebTest do
     end
   end
 
+  describe "delete a to-do list entry" do
+    test "delete the entry and returns a 204 status" do
+      list_name = "Bob's list III"
+      date = ~D[2024-01-27]
+      entry_id = 1
+
+      server = Todo.Cache.server_process(list_name)
+      Todo.Server.add_entry(server, %{date: date, title: "Dentist"})
+
+      # Sanity check
+      assert length(Todo.Server.entries(server, date)) == 1
+
+      conn =
+        :delete
+        |> conn("/lists/#{list_name}/entries/#{entry_id}")
+        |> put_req_header("content-type", "application/json")
+        |> Todo.Web.call(@opts)
+
+      assert conn.status == 204
+      assert Todo.Server.entries(server, date) == []
+    end
+  end
+
   test "unmatched routes return a 404" do
     conn = conn(:get, "/unknown") |> Todo.Web.call(@opts)
 
