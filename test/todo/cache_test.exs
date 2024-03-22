@@ -1,4 +1,4 @@
-defmodule TodoCacheTest do
+defmodule Todo.CacheTest do
   use ExUnit.Case
 
   test "starts a new server if not found in the cache" do
