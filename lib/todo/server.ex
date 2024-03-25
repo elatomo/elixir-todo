@@ -48,6 +48,15 @@ defmodule Todo.Server do
     GenServer.cast(todo_server, {:delete_entry, entry_id})
   end
 
+  def whereis(name) do
+    # `:global.whereis_name/1` provides good and stable performance by doing a
+    # single lookup in a local ETS table without any cross-node communication.
+    case :global.whereis_name({__MODULE__, name}) do
+      :undefined -> nil
+      pid -> pid
+    end
+  end
+
   @impl GenServer
   def init(name) do
     Logger.debug("Starting to-do server '#{name}'")
