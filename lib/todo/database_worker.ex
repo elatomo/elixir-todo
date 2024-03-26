@@ -27,7 +27,7 @@ defmodule Todo.DatabaseWorker do
   end
 
   @impl GenServer
-  def handle_call({:store, key, data}, _,db_folder) do
+  def handle_call({:store, key, data}, _, db_folder) do
     db_folder
     |> file_name(key)
     |> File.write!(:erlang.term_to_binary(data))
