@@ -44,6 +44,13 @@ defmodule Todo.Database do
   end
 
   def store(key, data) do
+    {_results, bad_nodes} =
+      :rpc.multicall(__MODULE__, :store_local, [key, data], :timer.seconds(5))
+
+    Enum.each(bad_nodes, &Logger.error("Store failed on node #{&1}"))
+  end
+
+  def store_local(key, data) do
     :poolboy.transaction(
       __MODULE__,
       fn worker_pid ->
