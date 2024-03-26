@@ -29,6 +29,10 @@ defmodule Todo.Server do
   @expiry_idle_timeout :timer.seconds(30)
 
   def start_link(name) do
+    # NOTE: Global registration is chatty and serialized (only one process at a
+    # time may perform global registration). This approach becomes problematic
+    # with increasing numbers of to-do lists or nodes in the cluster. We could
+    # consider looking at third-party libraries, such as Syn or Swarm.
     GenServer.start_link(__MODULE__, name, name: global_name(name))
   end
 
