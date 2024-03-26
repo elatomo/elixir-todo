@@ -37,7 +37,7 @@ defmodule Todo.Server do
   end
 
   def add_entry(todo_server, new_entry) do
-    GenServer.cast(todo_server, {:add_entry, new_entry})
+    GenServer.call(todo_server, {:add_entry, new_entry})
   end
 
   def entries(todo_server, date) do
@@ -45,11 +45,11 @@ defmodule Todo.Server do
   end
 
   def update_entry(todo_server, %{} = new_entry) do
-    GenServer.cast(todo_server, {:update_entry, new_entry})
+    GenServer.call(todo_server, {:update_entry, new_entry})
   end
 
   def delete_entry(todo_server, entry_id) do
-    GenServer.cast(todo_server, {:delete_entry, entry_id})
+    GenServer.call(todo_server, {:delete_entry, entry_id})
   end
 
   def whereis(name) do
@@ -77,24 +77,24 @@ defmodule Todo.Server do
   end
 
   @impl GenServer
-  def handle_cast({:add_entry, new_entry}, {name, todo_list}) do
+  def handle_call({:add_entry, new_entry}, _, {name, todo_list}) do
     new_list = Todo.List.add_entry(todo_list, new_entry)
     Todo.Database.store(name, new_list)
-    {:noreply, {name, new_list}, @expiry_idle_timeout}
+    {:reply, :ok, {name, new_list}, @expiry_idle_timeout}
   end
 
   @impl GenServer
-  def handle_cast({:update_entry, new_entry}, {name, todo_list}) do
+  def handle_call({:update_entry, new_entry}, _, {name, todo_list}) do
     new_list = Todo.List.update_entry(todo_list, new_entry)
     Todo.Database.store(name, new_list)
-    {:noreply, {name, new_list}, @expiry_idle_timeout}
+    {:reply, :ok, {name, new_list}, @expiry_idle_timeout}
   end
 
   @impl GenServer
-  def handle_cast({:delete_entry, entry_id}, {name, todo_list}) do
+  def handle_call({:delete_entry, entry_id}, _, {name, todo_list}) do
     new_list = Todo.List.delete_entry(todo_list, entry_id)
     Todo.Database.store(name, new_list)
-    {:noreply, {name, new_list}, @expiry_idle_timeout}
+    {:reply, :ok, {name, new_list}, @expiry_idle_timeout}
   end
 
   @impl GenServer
