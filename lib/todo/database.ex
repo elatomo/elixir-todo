@@ -62,7 +62,9 @@ defmodule Todo.Database do
   end
 
   defp ensure_db_folder() do
-    db_folder = Application.get_env(:todo, :db_folder)
+    # Node name is used to determine the database folder
+    [name_prefix, _] = "#{node()}" |> String.split("@")
+    db_folder = Application.get_env(:todo, :db_folder) |> Path.join(name_prefix)
     File.mkdir_p!(db_folder)
 
     db_folder
